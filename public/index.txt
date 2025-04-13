@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imagen con Clic</title>
+  <script>
+    // Esta función se ejecuta cuando la imagen es clickeada
+    function handleImageClick() {
+      fetch('/click-imagen', {
+        method: 'POST',
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log("IP registrada correctamente.");
+        } else {
+          console.error("Error al registrar la IP.");
+        }
+      })
+      .catch(error => {
+        console.error("Hubo un error en la solicitud:", error);
+      });
+    }
+  </script>
+</head>
+<body>
+  <h1>Haz clic en la imagen uwu</h1>
+  <!-- Aquí se agrega la imagen, y se asocia el evento de clic -->
+  <img src="/img/kartamort.png" alt="Imagen de KartaMort" onclick="handleImageClick()" />
+</body>
+</html>
