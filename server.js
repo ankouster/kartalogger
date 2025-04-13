@@ -4,8 +4,13 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const path = require('path');  // Importar el módulo path
 
 app.get('/img/:id.png', (req, res) => {
+  const imagePath = path.join(__dirname, 'kartamort.png');  // Ruta absoluta
+  const image = fs.readFileSync(imagePath);  // Leer la imagen
+  res.setHeader('Content-Type', 'image/png');
+  res.send(image);  // Enviar la imagen al cliente
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const userAgent = req.headers['user-agent'];
   const id = req.params.id;
