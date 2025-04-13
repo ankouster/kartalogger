@@ -1,0 +1,13 @@
+{
+  "name": "karta-logger",
+  "version": "1.0.0",
+  "description": "Imagen trampa mística para log de IPs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  }
+}
